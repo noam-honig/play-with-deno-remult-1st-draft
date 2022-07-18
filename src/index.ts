@@ -1,10 +1,10 @@
 import { opine, json } from "https://deno.land/x/opine@2.2.0/mod.ts";
 import { Entity, EntityBase, Fields, JsonDataProvider, JsonEntityStorage, Remult, allEntities } from 'remult';
-import { remultMiddleware } from "./mw/remult-middleware.ts";
+import { remultMiddleware } from 'remult/remult-middleware';
 
 
 
-import { JsonEntityFileStorage } from "./mw/JsonEntityFileStorage.ts";
+//import { JsonEntityFileStorage } from "./mw/JsonEntityFileStorage.ts";
 
 
 
@@ -60,4 +60,5 @@ app.listen(
 
 
 const remult =// new Remult(new InMemoryDataProvider());
-    new Remult(new JsonDataProvider(new JsonEntityFileStorage('./db')));
+    new Remult();
+   
