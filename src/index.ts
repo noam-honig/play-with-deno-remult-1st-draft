@@ -1,13 +1,7 @@
-import { opine, json } from "https://deno.land/x/opine@2.2.0/mod.ts";
-import { Entity, EntityBase, Fields, JsonDataProvider, JsonEntityStorage, Remult, allEntities } from 'remult';
+import { opine, json,Router } from "https://deno.land/x/opine@2.2.0/mod.ts";
+import { Entity, EntityBase, Fields, Remult } from 'remult';
 import { remultMiddleware } from 'remult/remult-middleware';
-
-
-
-//import { JsonEntityFileStorage } from "./mw/JsonEntityFileStorage.ts";
-
-
-
+import { createPostgresConnection } from './postgres.ts';
 @Entity("tasks", { allowApiCrud: true })
 class Task extends EntityBase {
     @Fields.autoIncrement()
@@ -18,17 +12,23 @@ class Task extends EntityBase {
 
 
 const app = opine();
-
+const r = new Router();
+app.use(r);
 
 app.use(json());
 
 const api = remultMiddleware({
+    dataProvider:  () => {
+        return createPostgresConnection({
+            connectionString: "postgres://postgres:MASTERKEY@localhost/postgres"
+        })
+    },
     entities: [Task]
 });
-console.log(allEntities);
-console.log(api);
-app.use((req: any, res: any, next: VoidFunction) =>
-    api.handleRequest(req, res, next));
+
+
+app.use(api);
+app.use((r,res)=>{});
 
 app.get("/", async function (req, res) {
     const repo = remult.repo(Task);
@@ -61,4 +61,4 @@ app.listen(
 
 const remult =// new Remult(new InMemoryDataProvider());
     new Remult();
-   
+
